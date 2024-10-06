@@ -50,7 +50,7 @@ const Navbar = () => {
             <NavLink to='/contact' className='hover:text-indigo-600'>
               <li>CONTACTS</li>
               <hr className='border-indigo-600 w-8 mx-auto mt-1' />
-            </NavLink>
+            </NavLink> 
           </ul>
         </nav>
 

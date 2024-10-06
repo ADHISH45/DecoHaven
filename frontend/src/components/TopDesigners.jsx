@@ -1,7 +1,7 @@
 import React from 'react'
 import { designer } from '../assets/assets'
 
-const Designers = () => {
+const TopDesigners = () => {
   return (
     <div className="py-10 px-6 bg-gray-50">
       <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Top Designers</h1>
@@ -28,4 +28,4 @@ const Designers = () => {
   )
 }
 
-export default Designers
+export default TopDesigners
