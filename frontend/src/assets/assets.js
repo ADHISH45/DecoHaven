@@ -30,12 +30,12 @@ import doc12 from './doc12.png'
 import doc13 from './doc13.png'
 import doc14 from './doc14.png'
 import doc15 from './doc15.png'
-import Dermatologist from './Dermatologist.svg'
-import Gastroenterologist from './Gastroenterologist.svg'
-import General_physician from './General_physician.svg'
-import Gynecologist from './Gynecologist.svg'
-import Neurologist from './Neurologist.svg'
-import Pediatricians from './Pediatricians.svg'
+import window from './window.svg'
+import kitchen from './kitchen.svg'
+import bed from './bed.svg'
+import living from './living.svg'
+import cupboard from './cupboard.svg'
+import hang_lamp from './hang-lamp.svg'
 
 
 export const assets = {
@@ -61,27 +61,27 @@ export const assets = {
 export const SpecialityData = [
     {
         speciality: 'Ceiling Designs',
-        image: General_physician
+        image: hang_lamp
     },
     {
         speciality: 'Curtain & Blinds Installation',
-        image: Gynecologist
+        image: window
     },
     {
         speciality: 'Interior Designing of Living Rooms',
-        image: Dermatologist
+        image: living
     },
     {
         speciality: 'Bedroom Interior Designing',
-        image: Pediatricians
+        image: bed
     },
     {
         speciality: 'Kitchen Design & Renovation',
-        image: Neurologist
+        image: kitchen
     },
     {
         speciality: 'Furniture Customization',
-        image: Gastroenterologist
+        image: cupboard
     },
 ]
 
