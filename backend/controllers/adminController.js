@@ -99,6 +99,17 @@ const loginAdmin = async(req,res) => {
 
     }
 
+    const allDesigners = async (req,res) => {
+      try{
+        const designers = await  designerModel.find({}).select('-password')
+        res.json({success:true,designers})
+      }
+      catch (error)
+      {
+        console.log(error)
+        res.json({succes:false,message:error.message})
+      }
+    }
 
 
-export { addDesigner,loginAdmin };
+export { addDesigner,loginAdmin,allDesigners };
