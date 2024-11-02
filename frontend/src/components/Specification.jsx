@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';  // Import the Link component
 
 const Specification = () => {
   return (
-    <div id='category' className="py-8 px-4">
+    <div id='speciality' className="py-8 px-4">
       {/* Header Section */}
       <h2 className="text-center text-3xl font-bold text-gray-800 mb-4">
         Find Your Perfect Design & Designers
@@ -18,7 +18,7 @@ const Specification = () => {
         {SpecialityData.map((item, index) => (
           <Link onClick={()=>scrollTo(0,0)} 
             key={index} 
-            to="/designers"  // Use Link to navigate to the designers page with a hash
+            to={`/designers/${item.speciality}`}  // Use Link to navigate to the designers page with a hash
             className="speciality-card w-44 mb-6 p-4 text-center bg-white rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105 hover:shadow-lg cursor-pointer"
           >
             <img 

@@ -101,8 +101,8 @@ const loginAdmin = async(req,res) => {
 
     const allDesigners = async (req,res) => {
       try{
-        const designers = await  designerModel.find({}).select('-password')
-        res.json({success:true,designers})
+        const designer = await  designerModel.find({}).select('-password')
+        res.json({success:true,designer})
       }
       catch (error)
       {

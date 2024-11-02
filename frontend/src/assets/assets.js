@@ -86,69 +86,94 @@ export const SpecialityData = [
 ]
 
 export const designer = [
-    {
+  {
       _id: 'designer1',
       name: 'Alice Martin',
       image: doc3,
-      speciality: 'Modern Interior Design',
+      speciality: 'Interior Designing of Living Rooms',
       experience: '6 Years',
       about: 'Alice specializes in modern and minimalist interior design, creating functional yet stylish spaces using clean lines and natural materials.'
-    },
-    {
+  },
+  {
       _id: 'designer2',
       name: 'Michael Johnson',
-      image: doc3,
-      speciality: 'Ceiling Installations',
+      image: doc4,
+      speciality: 'Ceiling Designs',
       experience: '8 Years',
-      about: 'Michael is an expert in ceiling installations, from suspended ceilings to complex decorative designs, ensuring both aesthetic appeal and functionality.'
-    },
-    {
+      about: 'Michael is an expert in ceiling designs, from suspended ceilings to complex decorative designs, ensuring both aesthetic appeal and functionality.'
+  },
+  {
       _id: 'designer3',
       name: 'Sophia Wang',
-      image: doc3, // Replace with the appropriate image import
-      speciality: 'Curtain Fittings',
+      image: doc5,
+      speciality: 'Curtain & Blinds Installation',
       experience: '5 Years',
       about: 'Sophia provides bespoke curtain fitting solutions, blending functionality and style to enhance any interior space with elegant window treatments.'
-    },
-    {
+  },
+  {
       _id: 'designer4',
       name: 'James Cooper',
-      image: doc3, // Replace with the appropriate image import
-      speciality: 'Ceiling Installations',
+      image: doc6,
+      speciality: 'Ceiling Designs',
       experience: '7 Years',
       about: 'James is a ceiling installation specialist, known for his expertise in designing and installing custom ceiling structures that elevate interior spaces.'
-    },
-    {
+  },
+  {
       _id: 'designer5',
       name: 'Maria Gonzalez',
-      image: doc3, // Replace with the appropriate image import
-      speciality: 'Curtain Fittings',
+      image: doc7,
+      speciality: 'Curtain & Blinds Installation',
       experience: '10 Years',
       about: 'Maria focuses on creating custom curtain solutions, offering a wide range of fabrics and styles to suit the unique needs of each client.'
-    },
-    {
+  },
+  {
       _id: 'designer6',
       name: 'David Nguyen',
-      image: doc3, // Replace with the appropriate image import
-      speciality: 'Modern Interior Design',
+      image: doc1,
+      speciality: 'Furniture Customization',
       experience: '4 Years',
       about: 'David specializes in modern interior design, with a focus on simplicity, neutral colors, and open spaces, making homes feel more expansive and serene.'
-    },
-    {
+  },
+  {
       _id: 'designer7',
       name: 'Olivia Thompson',
-      image: doc3, // Replace with the appropriate image import
-      speciality: 'Ceiling Installations',
+      image: doc11,
+      speciality: 'Ceiling Designs',
       experience: '9 Years',
       about: 'Olivia excels in the design and installation of creative ceiling solutions, transforming plain spaces into sophisticated, high-end interiors.'
-    },
-    {
+  },
+  {
       _id: 'designer8',
       name: 'Ethan Roberts',
-      image: doc3, // Replace with the appropriate image import
-      speciality: 'Curtain Fittings',
+      image: doc9,
+      speciality: 'Curtain & Blinds Installation',
       experience: '6 Years',
       about: 'Ethan provides modern and functional curtain fitting solutions, ensuring that window treatments are perfectly tailored to complement the overall design of the space.'
-    }
-  ];
+  },
+  {
+      _id: 'designer9',
+      name: 'Emma Brown',
+      image: doc14,
+      speciality: 'Bedroom Interior Designing',
+      experience: '7 Years',
+      about: 'Emma specializes in creating tranquil and stylish bedroom interiors, focusing on comfort, elegance, and personalized touches.'
+  },
+  {
+      _id: 'designer10',
+      name: 'Liam Patel',
+      image: doc15,
+      speciality: 'Kitchen Design & Renovation',
+      experience: '12 Years',
+      about: 'Liam has extensive experience in kitchen renovations, transforming spaces into functional and beautiful kitchens tailored to client preferences.'
+  },
+  {
+      _id: 'designer11',
+      name: 'Grace Lee',
+      image: doc2,
+      speciality: 'Furniture Customization',
+      experience: '8 Years',
+      about: 'Grace is a furniture customization expert, helping clients design unique pieces that match their interior style and meet practical needs.'
+  }
+];
+
   
