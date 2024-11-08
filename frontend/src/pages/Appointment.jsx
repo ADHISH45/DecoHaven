@@ -1,12 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 import RelatedDesigners from '../components/RelatedDesigners';
+import { toast } from 'react-toastify'; // Ensure react-toastify is installed
+import axios from 'axios';
 
 const Appointment = () => {
   const { desId } = useParams();
-  const { designers } = useContext(AppContext);
+  const { designers, backendUrl, token, getDesignersData } = useContext(AppContext);
   const daysofWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+  const navigate = useNavigate();
 
   const [desInfo, setDesInfo] = useState(null);
   const [desSlots, setDesSlots] = useState([]);
@@ -20,6 +24,11 @@ const Appointment = () => {
   };
 
   const getAvailableSlots = () => {
+    if (!desInfo || !desInfo.slots_booked) {
+      console.warn("Designer information or slots_booked data is not available.");
+      return;
+    }
+
     const slots = [];
     let today = new Date();
 
@@ -41,10 +50,22 @@ const Appointment = () => {
       let timeSlots = [];
       while (currentDate < endTime) {
         let formattedTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        timeSlots.push({
-          datetime: new Date(currentDate),
-          time: formattedTime,
-        });
+
+        let day = currentDate.getDate();
+        let month = currentDate.getMonth() + 1;
+        let year = currentDate.getFullYear();
+
+        const slotDate = `${day}_${month}_${year}`;
+        const slotTime = formattedTime;
+
+        const isSlotAvailable = !(desInfo.slots_booked[slotDate] && desInfo.slots_booked[slotDate].includes(slotTime));
+        if (isSlotAvailable) {
+          timeSlots.push({
+            datetime: new Date(currentDate),
+            time: formattedTime,
+          });
+        }
+
         currentDate.setMinutes(currentDate.getMinutes() + 45);
       }
       slots.push(timeSlots);
@@ -53,10 +74,50 @@ const Appointment = () => {
     setDesSlots(slots);
   };
 
+  const bookAppointment = async () => {
+    if (!token) {
+      toast.warn('Please log in to book an appointment');
+      navigate('/login');
+      return;
+    }
+  
+    try {
+      const date = desSlots[slotIndex][0].datetime;
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+  
+      const slotDate = `${day}_${month}_${year}`;
+      const slotTime = selectedTime; // Make sure selectedTime is defined
+  
+      const { data } = await axios.post(
+        `${backendUrl}/api/user/book-appointment`,
+        { desId, slotDate, slotTime },
+        { headers: { token } }
+      );
+  
+      if (data.success) {
+        toast.success(data.message);
+        getDesignersData();
+        navigate('/myappointments');
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('An error occurred while booking the appointment');
+    }
+  };
+  
   useEffect(() => {
     fetchDesInfo();
-    getAvailableSlots();
   }, [designers, desId]);
+
+  useEffect(() => {
+    if (desInfo) {
+      getAvailableSlots();
+    }
+  }, [desInfo]);
 
   const handleDateSelection = (index) => {
     setSlotIndex(index);
@@ -121,6 +182,7 @@ const Appointment = () => {
               <p className="text-gray-500">Select a date to view available time slots</p>
             )}
             <button
+              onClick={bookAppointment}
               className="mt-6 w-full bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-all"
               disabled={!selectedTime}
             >

@@ -10,10 +10,10 @@ const AppContextProvider = (props) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL
 
     const [designers, setDesigners] = useState([])
+    const [token,setToken] = useState(localStorage.getItem('token')?localStorage.getItem('token'):false)
+    const [userData,setUserData] = useState(false)
 
-    const value = {
-        designers
-    }
+   
 
     const getDesignersData = async () => {
         try {
@@ -28,10 +28,39 @@ const AppContextProvider = (props) => {
             toast.error(error.message)
         }
     }
+    const loadUserProfileData = async () =>{
+        try {
+            const {data} = await axios.get(backendUrl + '/api/user/get-profile',{headers:{token}})
+            if (data.success){
+                setUserData(data.userData)
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            console.log(error)
+            toast.error(error.message)
+        }
+    }
+    const value = {
+        designers,getDesignersData,
+        token,
+        setToken,
+        backendUrl,userData,
+        setUserData,
+        loadUserProfileData
+    }
 
     useEffect(() => {
         getDesignersData()
     }, [])
+
+    useEffect(() => {
+        if (token){
+            loadUserProfileData()
+        } else{
+            setUserData(false)
+        }
+    }, [token])
 
     return (
         <AppContext.Provider value={value}>

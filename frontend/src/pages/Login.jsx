@@ -1,23 +1,63 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { AppContext } from '../context/AppContext';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const { backendUrl, token, setToken } = useContext(AppContext);
+  const navigate = useNavigate();
+
   const [state, setState] = useState('Sign Up'); // Toggle between Sign Up and Login
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [phoneNo, setPhoneNo] = useState(''); // Phone Number state
+  const [phoneNumber, setPhoneNo] = useState(''); // Phone Number state
   const [address, setAddress] = useState(''); // Address state
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
-    if (state === 'Sign Up') {
-      // Handle Sign Up logic here
-      console.log('Signing Up with:', { name, email, password, phoneNo, address });
-    } else {
-      // Handle Login logic here
-      console.log('Logging in with:', { email, password });
+    try {
+      if (state === 'Sign Up') {
+        // Registration API call with correct payload
+        const { data } = await axios.post(backendUrl + '/api/user/register', {
+          name,
+          email,
+          phoneNumber,
+          address,
+          password,
+        });
+        if (data.success) {
+          localStorage.setItem('token', data.token);
+          setToken(data.token);
+          toast.success("Registration successful");
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+        // Login API call with correct payload
+        const { data } = await axios.post(backendUrl + '/api/user/login', {
+          email,
+          password,
+        });
+        if (data.success) {
+          localStorage.setItem('token', data.token);
+          setToken(data.token);
+          toast.success("Login successful");
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      toast.error(error.message || "An error occurred");
     }
   };
+
+  useEffect(() => {
+    if (token) {
+      navigate('/');
+    }
+  }, [token]);
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -28,7 +68,7 @@ const Login = () => {
         <h2 className="text-2xl font-bold text-center mb-6">
           {state === 'Sign Up' ? 'Create an Account' : 'Login to Your Account'}
         </h2>
-        
+
         {state === 'Sign Up' && (
           <>
             {/* Name Field */}
@@ -43,20 +83,20 @@ const Login = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-indigo-200"
               />
             </div>
-            
+
             {/* Phone Number Field */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Phone Number:</label>
               <input 
                 type="text" 
-                value={phoneNo} 
+                value={phoneNumber} 
                 onChange={(e) => setPhoneNo(e.target.value)} 
                 placeholder="Enter your phone number" 
                 required 
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-indigo-200"
               />
             </div>
-            
+
             {/* Address Field */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Address:</label>
