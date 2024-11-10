@@ -5,7 +5,14 @@ import { v2 as cloudinary } from 'cloudinary';
 import userModel from '../models/userModel.js';
 import designerModel from '../models/designerModel.js';
 import appointmentModel from '../models/appointmentModel.js';
-import razorpay from 'razorpay'
+import Razorpay from 'razorpay';
+import crypto from 'crypto';
+
+// Configure Razorpay instance
+const razorpayInstance = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_SECRET_KEY
+});
 
 // API to register user
 const registerUser = async (req, res) => {
@@ -192,16 +199,72 @@ const cancelAppointment = async (req, res) => {
     }
 };
 
-const razorpayInstance = new razorpay({
-    key_id:'',
-    key_secret:''
-})
+// API to create a Razorpay order for appointment payment
+const paymentRazorpay = async (req, res) => {
+    try {
+        const amount = 100000;
+        const { appointmentId } = req.body
+        const appointmentData = await appointmentModel.findById(appointmentId)
+        if (!appointmentData || appointmentData.cancelled) {
+            return res.json({ succes: false, message: "Appointment cancelled or Not found" })
+        }
+
+        // Create a new order with Razorpay
+        const options = {
+            amount: amount, // Razorpay expects amount in paise
+            currency: process.env.CURRENCY,
+            receipt: appointmentId
+        }
+
+        const order = await razorpayInstance.orders.create(options);
+
+        res.json({ success: true, order });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Payment initiation failed" });
+    }
+};
+
+// API to verify Razorpay payment signature
+// const verifyPayment = async (req, res) => {
+//     try {
+//         const { order_id, payment_id, signature, appointmentId } = req.body;
+
+//         // Generate and verify signature using Razorpay's verification method
+//         const generated_signature = crypto
+//             .createHmac('sha256', process.env.REACT_APP_RAZORPAY_SECRET_KEY)
+//             .update(`${order_id}|${payment_id}`)
+//             .digest('hex');
+
+//         if (generated_signature !== signature) {
+//             return res.status(400).json({ success: false, message: "Payment verification failed" });
+//         }
+
+//         // Update appointment with payment details
+//         await appointmentModel.findByIdAndUpdate(appointmentId, {
+//             paymentDetails: {
+//                 orderId: order_id,
+//                 paymentId: payment_id,
+//                 status: 'paid'
+//             },
+//             isPaid: true
+//         });
+
+//         res.json({ success: true, message: "Payment verified and saved successfully" });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ success: false, message: "Error verifying and saving payment" });
+//     }
+// };
 
 
-//API to make payment of appointment using razorpay
-
-const paymentRazorpay = async (req,res) => {
-
-}
-
-export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointment };
+export {
+    registerUser,
+    loginUser,
+    getProfile,
+    updateProfile,
+    bookAppointment,
+    listAppointment,
+    cancelAppointment,
+    paymentRazorpay
+};

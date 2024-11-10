@@ -22,57 +22,45 @@ const Appointment = () => {
     const desInfo = designers.find(des => des._id === desId);
     setDesInfo(desInfo);
   };
-
   const getAvailableSlots = () => {
     if (!desInfo || !desInfo.slots_booked) {
       console.warn("Designer information or slots_booked data is not available.");
       return;
     }
-
+  
     const slots = [];
     let today = new Date();
-
+  
+    // Set the available times: 10:00 AM, 12:00 PM, 2:00 PM, 4:00 PM
+    const availableTimes = ['10:00', '12:00', '14:00', '16:00']; // 4 time slots
+  
     for (let i = 0; i < 7; i++) {
       let currentDate = new Date(today);
       currentDate.setDate(today.getDate() + i);
-
-      let endTime = new Date(currentDate);
-      endTime.setHours(21, 0, 0, 0);
-
-      if (today.getDate() === currentDate.getDate()) {
-        currentDate.setHours(currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10);
-        currentDate.setMinutes(currentDate.getMinutes() > 30 ? 30 : 0);
-      } else {
-        currentDate.setHours(10);
-        currentDate.setMinutes(0);
-      }
-
+  
       let timeSlots = [];
-      while (currentDate < endTime) {
-        let formattedTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        let day = currentDate.getDate();
-        let month = currentDate.getMonth() + 1;
-        let year = currentDate.getFullYear();
-
-        const slotDate = `${day}_${month}_${year}`;
-        const slotTime = formattedTime;
-
-        const isSlotAvailable = !(desInfo.slots_booked[slotDate] && desInfo.slots_booked[slotDate].includes(slotTime));
+  
+      // For each day, loop through the available times
+      availableTimes.forEach(time => {
+        let formattedTime = time;
+        let slotDate = `${currentDate.getDate()}_${currentDate.getMonth() + 1}_${currentDate.getFullYear()}`;
+  
+        const isSlotAvailable = !(desInfo.slots_booked[slotDate] && desInfo.slots_booked[slotDate].includes(formattedTime));
+  
         if (isSlotAvailable) {
           timeSlots.push({
-            datetime: new Date(currentDate),
+            datetime: new Date(currentDate.setHours(parseInt(time.split(':')[0]), parseInt(time.split(':')[1]), 0, 0)),
             time: formattedTime,
           });
         }
-
-        currentDate.setMinutes(currentDate.getMinutes() + 45);
-      }
+      });
+  
       slots.push(timeSlots);
     }
-
+  
     setDesSlots(slots);
   };
+  
 
   const bookAppointment = async () => {
     if (!token) {

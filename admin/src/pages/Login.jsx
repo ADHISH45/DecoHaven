@@ -3,6 +3,7 @@ import { assets } from '../assets/assets';
 import { AdminContext } from '../context/AdminContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { DesignerContext } from '../context/DesignerContext';
 
 const backendUrl = 'http://localhost:4000'; // Make sure to replace this with the actual backend URL
 
@@ -12,6 +13,8 @@ const Login = () => {
     const [password, setPassword] = useState('');
 
     const { setAToken } = useContext(AdminContext);
+    const {setDToken} = useContext(DesignerContext)
+
 
     const onSubmitHandler = async (event) => {
         event.preventDefault();
@@ -30,8 +33,13 @@ const Login = () => {
                 // Handle Designer login similarly
                 const { data } = await axios.post(`${backendUrl}/api/designer/login`, { email, password });
                 if (data.success) {
+                    localStorage.setItem('dToken',data.token);
+                    setDToken(data.token); // Save the token in the context
                     console.log(data.token);
-                    setAToken(data.token); // Save the token in the context
+                    
+                }
+                else {
+                    toast.error(data.message)
                 }
             }
         } catch (error) {

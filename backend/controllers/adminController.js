@@ -1,8 +1,10 @@
-import validator from "validator"
-import bcrypt from 'bcrypt'
-import {v2 as cloudinary} from "cloudinary"
-import designerModel from "../models/designerModel.js"
-import jwt from 'jsonwebtoken'
+import validator from "validator";
+import bcrypt from 'bcrypt';
+import { v2 as cloudinary } from "cloudinary";
+import designerModel from "../models/designerModel.js";
+import jwt from 'jsonwebtoken';
+import appointmentModel from "../models/appointmentModel.js";
+import userModel from "../models/userModel.js";
 
 // API for adding Designer
 const addDesigner = async (req, res) => {
@@ -49,67 +51,114 @@ const addDesigner = async (req, res) => {
     const saltRounds = 10; // Number of salt rounds (10 is a common value)
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    //upload image to cloudinary
-    const imageUpload = await cloudinary.uploader.upload(imageFile.path,{resource_type:"image"})
-    const imageUrl = imageUpload.secure_url
+    // Upload image to cloudinary
+    const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" });
+    const imageUrl = imageUpload.secure_url;
 
     const designerData = {
-        name,
-        email,
-        image:imageUrl,
-        password:hashedPassword,
-        speciality,
-        experience,
-        about
-    }
+      name,
+      email,
+      image: imageUrl,
+      password: hashedPassword,
+      speciality,
+      experience,
+      about
+    };
 
-    const newDesigner = new designerModel(designerData)
-    await newDesigner.save()
-    res.json({success:true,message:"Designer added"})
+    const newDesigner = new designerModel(designerData);
+    await newDesigner.save();
 
-    // All validations passed - proceed with adding the designer to the database
-    // Example of saving to database (pseudo code):
-    // const newDesigner = new Designer({ name, email, password: hashedPassword, speciality, experience, about, image: imageFile });
-    // await newDesigner.save();
-
-    return res.status(201).json({ success: true, message: "Designer added successfully" });
+    res.json({ success: true, message: "Designer added" });
 
   } catch (error) {
     // Handle errors and send a meaningful response
-    console.log(error)
+    console.log(error);
     return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
   }
 };
 
-//API for admin Login
-const loginAdmin = async(req,res) => {
-    try{
-        const {email,password} = req.body
+// API for admin Login
+const loginAdmin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-        if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD){
-            const token = jwt.sign(email+password,process.env.JWT_SECRET)
-            res.json({success: true,token})
-        }else{
-            res.json({success: false, message: "Invalid Credentials"})
-        }
-    } catch (error){
-        console.log(error)
+    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+      const token = jwt.sign(email + password, process.env.JWT_SECRET);
+      res.json({ success: true, token });
+    } else {
+      res.json({ success: false, message: "Invalid Credentials" });
+    }
+  } catch (error) {
+    console.log(error);
     return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
   }
+};
 
+// API to get all designers
+const allDesigners = async (req, res) => {
+  try {
+    const designers = await designerModel.find({}).select('-password');
+    res.json({ success: true, designers });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// API to get all appointments list
+const appointmentsAdmin = async (req, res) => {
+  try {
+    const appointments = await appointmentModel.find({});
+    res.json({ success: true, appointments });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// API to cancel an appointment
+const cancelAppointment = async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+
+    // Find the appointment by ID
+    const appointment = await appointmentModel.findById(appointmentId);
+
+    if (!appointment) {
+      return res.status(404).json({ success: false, message: "Appointment not found" });
     }
 
-    const allDesigners = async (req,res) => {
-      try{
-        const designer = await  designerModel.find({}).select('-password')
-        res.json({success:true,designer})
-      }
-      catch (error)
-      {
-        console.log(error)
-        res.json({succes:false,message:error.message})
-      }
+    // Update the 'cancelled' field to true
+    appointment.cancelled = true;
+    await appointment.save();
+
+    return res.json({ success: true, message: "Appointment cancelled successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
+  }
+};
+//API to get Admin dashboard
+const adminDashboard = async (req,res) => {
+  try {
+    const designers = await designerModel.find({})
+    const users = await userModel.find({})
+    const appointments = await appointmentModel.find({})
+
+    const dashData = {
+      designers: designers.length,
+      appointments:appointments.length,
+      Users:users.length,
+      latestAppointment: appointments.reverse().slice(0,5)
     }
+    res.json({success:true,dashData})
 
 
-export { addDesigner,loginAdmin,allDesigners };
+  } catch (error) {
+    console.log(error);
+   res.status(500).json({ success: false, message: error.message });
+ 
+  }
+}
+
+export { addDesigner, loginAdmin, allDesigners, appointmentsAdmin, cancelAppointment,adminDashboard};

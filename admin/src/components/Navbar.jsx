@@ -1,16 +1,28 @@
 import React, { useContext } from 'react';
 import { assets } from '../assets/assets';
 import { AdminContext } from '../context/AdminContext';
-import {useNavigate} from 'react-router-dom'
+import { DesignerContext } from '../context/DesignerContext';  // Import DesignerContext
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-  const { aToken, setAToken } = useContext(AdminContext)
-  const navigate = useNavigate()
+  const { aToken, setAToken } = useContext(AdminContext);
+  const { dToken, setDToken } = useContext(DesignerContext);  // Access dToken and setDToken
+  const navigate = useNavigate();
 
   const logout = () => {
-     navigate('/')
-      aToken && setAToken('');
-      aToken && localStorage.removeItem('aToken')
+    // Clear the appropriate tokens from localStorage and context
+    if (aToken) {
+      setAToken('');
+      localStorage.removeItem('aToken');
+    }
+
+    if (dToken) {
+      setDToken('');
+      localStorage.removeItem('dToken');
+    }
+
+    // Redirect to login page
+    navigate('/');
   };
 
   return (

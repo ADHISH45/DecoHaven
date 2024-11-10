@@ -5,7 +5,7 @@ const Header = () => {
 
   // Function to scroll smoothly to the category section
   const scrollToCategory = () => {
-    const categorySection = document.getElementById('category');
+    const categorySection = document.getElementById('speciality');
     if (categorySection) {
       categorySection.scrollIntoView({ behavior: 'smooth' });
     }
