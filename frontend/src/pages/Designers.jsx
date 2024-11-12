@@ -62,6 +62,7 @@ const Designers = () => {
               src={item.image}
               alt={item.name}
               className="w-full h-48 object-cover rounded-t-lg mb-4"
+              style={{ objectPosition: '50% 0%' }} // This ensures the top of the image is prioritized
             />
             <div className="text-center">
               <p className="text-xl font-semibold text-gray-800">{item.name}</p>

@@ -11,13 +11,11 @@ const appointmentSchema = new mongoose.Schema({
     date: { type:Number, required:true},
     cancelled: { type:Boolean, required:false},
     isCompleted: { type:Boolean, required:false},
-    isPaid: { type: Boolean, default: false },  // New field to track payment status
-    paymentDetails: {                            // New field to store payment information
-        orderId: { type: String },
-        paymentId: { type: String },
-        status: { type: String, default: 'pending' }
+    isPaid: { type: Boolean, default: false },
+    paymentStatus: { type: String, enum: ['pending', 'success', 'failed', 'offline'], default: 'pending' },
+    paymentDetails: { type: Object, default: {} }
     }
-})
+)
 
 const appointmentModel = mongoose.models.appointment || mongoose.model('appointment',appointmentSchema)
 export default appointmentModel

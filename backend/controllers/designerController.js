@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import appointmentModel from "../models/appointmentModel.js";
 
+
 // Fetch list of designers without sensitive data
 const designerList = async (req, res) => {
     try {
@@ -130,18 +131,20 @@ const designerProfile = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
+// Assuming this is inside your designerController.js file
 
-// Update Designer Profile
 const updateDesignerProfile = async (req, res) => {
     try {
         const designerId = req.designerId;
         const { name, speciality, email, about, experience } = req.body;
 
+        // Handle image upload if provided
         let updatedImage = req.body.image;
         if (req.file) {
-            updatedImage = req.file.path;
+            updatedImage = req.file.path; // Store the image path if uploaded
         }
 
+        // Update the designer profile in the database
         const updatedProfile = await designerModel.findByIdAndUpdate(designerId, {
             name,
             speciality,
@@ -151,12 +154,15 @@ const updateDesignerProfile = async (req, res) => {
             image: updatedImage || undefined,
         }, { new: true });
 
+        // Send the updated profile as a response
         res.json({ success: true, message: 'Profile Updated', profileData: updatedProfile });
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.json({ success: false, message: error.message });
     }
 };
+
+
 
 export {
     designerList,

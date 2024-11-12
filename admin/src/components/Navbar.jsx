@@ -26,9 +26,9 @@ const Navbar = () => {
   };
 
   return (
-    <div className="bg-gray-900 text-white py-4 px-6 flex justify-between items-center shadow-lg">
+    <div className=" bg-slate-400 text-white py-4 px-6 flex justify-between items-center shadow-lg ">
       <div className="flex items-center">
-        <img src={assets.admin_logo} alt="Admin Logo" className="h-12 w-12 mr-3 rounded-full" />
+        <img src={assets.admin_logo} alt="Admin Logo" className="h-20 w-40 mr-36 rounded-full" />
         <p className="text-xl font-semibold">{aToken ? 'Admin' : 'Designer'}</p>
       </div>
       <button

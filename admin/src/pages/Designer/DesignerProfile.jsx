@@ -1,4 +1,3 @@
-// DesignerProfile.jsx
 import React, { useContext, useEffect, useState } from 'react';
 import { DesignerContext } from '../../context/DesignerContext';
 import { toast } from 'react-toastify';
@@ -31,55 +30,41 @@ const DesignerProfile = () => {
     }
   }, [profileData]);
 
+  // Handle profile update
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
-
-    // Ensure at least one field is updated
-    const updatedFields = {};
-
-    if (updatedName !== profileData.name) updatedFields.name = updatedName;
-    if (updatedSpeciality !== profileData.speciality) updatedFields.speciality = updatedSpeciality;
-    if (updatedAbout !== profileData.about) updatedFields.about = updatedAbout;
-    if (updatedExperience !== profileData.experience) updatedFields.experience = updatedExperience;
-    if (updatedImage && updatedImage !== profileData.image) updatedFields.image = updatedImage;
-
-    // If no fields are updated, return early
-    if (Object.keys(updatedFields).length === 0) {
-      toast.error("No changes detected.");
-      return;
-    }
-
-    // Prepare FormData
+  
+    // Prepare FormData with updated fields
     const formData = new FormData();
-
-    // Append only the updated fields to FormData
-    if (updatedFields.name) formData.append('name', updatedFields.name);
-    if (updatedFields.speciality) formData.append('speciality', updatedFields.speciality);
-    if (updatedFields.about) formData.append('about', updatedFields.about);
-    if (updatedFields.experience) formData.append('experience', updatedFields.experience);
-    if (updatedFields.image) formData.append('image', updatedFields.image);
-
+    formData.append('name', updatedName);
+    formData.append('speciality', updatedSpeciality);
+    formData.append('about', updatedAbout);
+    formData.append('experience', updatedExperience);
+    if (updatedImage) formData.append('image', updatedImage);
+  
     try {
-      // Send the form data to the backend API
-      const { data } = await axios.put(`${backendUrl}/api/designer/update-profile`, formData, {
+      const response = await axios.put(`${backendUrl}/api/designer/update-profile`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          dToken, // Add token for authentication
+          dToken, // authentication token
         },
       });
-
-      if (data.success) {
-        // Update frontend state with new profile data
-        setProfileData(data.profileData);
-        setIsEditing(false); // Disable editing after successful update
-        toast.success(data.message);
+  
+      console.log(response.data);  // Log the response to verify it contains updated profile data
+  
+      if (response.data.success) {
+        setProfileData(response.data.profileData);  // Update frontend state with the new data
+        setIsEditing(false);  // Disable editing mode
+        toast.success(response.data.message);
       } else {
-        toast.error(data.message || "Failed to update profile.");
+        toast.error(response.data.message || "Failed to update profile.");
       }
     } catch (error) {
+      console.error(error);
       toast.error(error.response?.data?.message || error.message);
     }
   };
+  
 
   return (
     profileData && (
@@ -199,7 +184,7 @@ const DesignerProfile = () => {
 
             <button
               onClick={() => setIsEditing(true)}
-              className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 mt-4"
+              className="bg-blue-600 text-white py-2 px-4 rounded-md mt-4 hover:bg-blue-700"
             >
               Edit Profile
             </button>

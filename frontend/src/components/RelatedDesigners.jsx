@@ -16,7 +16,7 @@ const RelatedDesigners = ({ speciality, desId }) => {
 
   return (
     <div className="py-10 px-6 bg-gray-50">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Top Designers</h1>
+      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Top Related Designers</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {relDes.map((item, index) => (
           <div onClick={() => {navigate(`/appointment/${item._id}`); scrollTo(0,0)} }key={index} 

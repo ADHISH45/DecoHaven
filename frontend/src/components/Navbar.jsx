@@ -15,6 +15,11 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  // Toggle dropdown visibility on profile image click
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+  };
+
   return (
     <header className="bg-indigo-600 shadow-lg text-white">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
@@ -62,11 +67,7 @@ const Navbar = () => {
         {/* Profile and Buttons */}
         <div className="flex items-center gap-4">
           {token && userData ? (
-            <div
-              className="relative cursor-pointer"
-              onMouseEnter={() => setShowDropdown(true)}
-              onMouseLeave={() => setShowDropdown(false)}
-            >
+            <div className="relative cursor-pointer" onClick={toggleDropdown}>
               <div className="flex items-center gap-2">
                 <img className="w-10 h-10 rounded-full" src={userData.image} alt="Profile" />
                 <img className="w-3" src={assets.dropdown_icon} alt="Dropdown" />

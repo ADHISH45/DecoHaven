@@ -5,16 +5,17 @@ import { v2 as cloudinary } from 'cloudinary';
 import userModel from '../models/userModel.js';
 import designerModel from '../models/designerModel.js';
 import appointmentModel from '../models/appointmentModel.js';
+import Appointment from '../models/appointmentModel.js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 
 // Configure Razorpay instance
 const razorpayInstance = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_SECRET_KEY
+    key_id: process.env.VITE_RAZORPAY_KEY_ID,
+    key_secret: process.env.VITE_RAZORPAY_SECRET_KEY
 });
 
-// API to register user
+// Register user
 const registerUser = async (req, res) => {
     try {
         const { name, email, phoneNumber, address, password } = req.body;
@@ -52,6 +53,7 @@ const registerUser = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
+
 
 // API to log in user
 const loginUser = async (req, res) => {
@@ -200,31 +202,6 @@ const cancelAppointment = async (req, res) => {
 };
 
 // API to create a Razorpay order for appointment payment
-const paymentRazorpay = async (req, res) => {
-    try {
-        const amount = 100000;
-        const { appointmentId } = req.body
-        const appointmentData = await appointmentModel.findById(appointmentId)
-        if (!appointmentData || appointmentData.cancelled) {
-            return res.json({ succes: false, message: "Appointment cancelled or Not found" })
-        }
-
-        // Create a new order with Razorpay
-        const options = {
-            amount: amount, // Razorpay expects amount in paise
-            currency: process.env.CURRENCY,
-            receipt: appointmentId
-        }
-
-        const order = await razorpayInstance.orders.create(options);
-
-        res.json({ success: true, order });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: "Payment initiation failed" });
-    }
-};
-
 // API to verify Razorpay payment signature
 // const verifyPayment = async (req, res) => {
 //     try {
@@ -256,6 +233,46 @@ const paymentRazorpay = async (req, res) => {
 //         res.status(500).json({ success: false, message: "Error verifying and saving payment" });
 //     }
 // };
+// backend/controllers/appointmentController.js
+
+    const getAppointmentDetails = async (req, res) => {
+    const { appointmentId } = req.params; // Get appointmentId from URL parameters
+  
+    try {
+      // Fetch the appointment by appointmentId
+      const appointment = await Appointment.findById(appointmentId)
+        .populate('userId', 'name email phone') // Populate user data (if necessary)
+        .populate('desId', 'name specialty'); // Populate designer data (if necessary)
+  
+      if (!appointment) {
+        return res.status(404).json({ success: false, message: 'Appointment not found' });
+      }
+  
+      res.status(200).json({ success: true, appointment });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: 'Server error while fetching appointment details' });
+    }
+  };
+  // controllers/userController.js
+    const payByCash = async (req, res) => {
+    const { appointmentId } = req.body;
+    try {
+      const appointment = await Appointment.findById(appointmentId);
+      if (!appointment) {
+        return res.status(404).json({ success: false, message: "Appointment not found" });
+      }
+  
+      appointment.isPaid = true;
+      await appointment.save();
+  
+      res.status(200).json({ success: true, message: "Payment marked as completed by cash." });
+    } catch (error) {
+      console.error("Error updating cash payment:", error);
+      res.status(500).json({ success: false, message: "Server error while processing cash payment." });
+    }
+  };
+  
 
 
 export {
@@ -266,5 +283,5 @@ export {
     bookAppointment,
     listAppointment,
     cancelAppointment,
-    paymentRazorpay
-};
+    getAppointmentDetails,payByCash
+}; 

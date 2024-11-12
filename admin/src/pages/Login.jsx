@@ -4,6 +4,7 @@ import { AdminContext } from '../context/AdminContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { DesignerContext } from '../context/DesignerContext';
+import { useNavigate } from 'react-router-dom';
 
 const backendUrl = 'http://localhost:4000'; // Make sure to replace this with the actual backend URL
 
@@ -13,8 +14,8 @@ const Login = () => {
     const [password, setPassword] = useState('');
 
     const { setAToken } = useContext(AdminContext);
-    const {setDToken} = useContext(DesignerContext)
-
+    const { setDToken } = useContext(DesignerContext);
+    const navigate = useNavigate();
 
     const onSubmitHandler = async (event) => {
         event.preventDefault();
@@ -23,31 +24,28 @@ const Login = () => {
             if (userType === 'Admin') {
                 const { data } = await axios.post(`${backendUrl}/api/admin/login`, { email, password });
                 if (data.success) {
-                    localStorage.setItem('aToken',data.token);
-                    setAToken(data.token); // Save the token in the context
-                }
-                else {
-                    toast.error(data.message)
+                    localStorage.setItem('aToken', data.token);
+                    setAToken(data.token);
+                    navigate('/admin-dashboard'); // Redirect to admin dashboard
+                } else {
+                    toast.error(data.message);
                 }
             } else {
-                // Handle Designer login similarly
                 const { data } = await axios.post(`${backendUrl}/api/designer/login`, { email, password });
                 if (data.success) {
-                    localStorage.setItem('dToken',data.token);
-                    setDToken(data.token); // Save the token in the context
-                    console.log(data.token);
-                    
-                }
-                else {
-                    toast.error(data.message)
+                    localStorage.setItem('dToken', data.token);
+                    setDToken(data.token);
+                    navigate('/designer-dashboard'); // Redirect to designer dashboard
+                } else {
+                    toast.error(data.message);
                 }
             }
         } catch (error) {
             console.error('Login failed:', error);
+            toast.error('An error occurred during login.');
         }
     };
 
-    // Function to toggle between Admin and Designer login
     const toggleUserType = () => {
         setUserType(userType === 'Admin' ? 'Designer' : 'Admin');
     };
