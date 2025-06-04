@@ -10,7 +10,7 @@ import MyAppointments from './pages/Myappointments'
 import Appointment from './pages/Appointment'
 import Navbar from './components/Navbar'
 import Designs from './pages/Designs'
-import PaymentPage from './pages/Paymentpage'
+import PaymentPage from './pages/paymentpage'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
