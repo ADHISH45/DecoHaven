@@ -8,7 +8,7 @@ import Contact from './pages/Contact'
 import Myprofile from './pages/Myprofile'
 import MyAppointments from './pages/Myappointments'
 import Appointment from './pages/Appointment'
-import Navbar from './components/navbar'
+import Navbar from './components/Navbar'
 import Designs from './pages/Designs'
 import PaymentPage from './pages/Paymentpage'
 import { ToastContainer } from 'react-toastify';
