@@ -1,5 +1,5 @@
 import designerModel from "../models/designerModel.js";
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import appointmentModel from "../models/appointmentModel.js";
 
